@@ -12,8 +12,19 @@ export const App = () => {
   const dispatch = useDispatch();
   const formData = useSelector(selectFormFields);
 
-  const handleFieldChange = (id: string, value: string | File) => {
-    dispatch(updateField({ id, value: value as string }));
+  const onFieldChange = (
+    id: string,
+    value: string | File,
+    isValid: boolean,
+    error: string
+  ) => {
+    dispatch(
+      updateField({
+        id,
+        value: value as string,
+        validation: { isValid: isValid, error: error },
+      })
+    );
   };
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
@@ -24,9 +35,9 @@ export const App = () => {
 
   return (
     <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-4'>Your Form Title</h1>
+      <h1 className='text-2xl font-bold mb-4'>Dynamic Form</h1>
       <form onSubmit={handleSubmit}>
-        <InputField fields={fields} onFieldChange={handleFieldChange} />
+        <InputField fields={fields} onFieldChange={onFieldChange} />
         <button type='submit'>Submit</button>
       </form>
     </div>

@@ -1,7 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Draft } from 'immer';
+import RootState from '@src/features/RootState';
 
-interface FormState {
-  fields: Record<string, string>;
+export interface FormField {
+  validation: Validation;
+  value: string;
+  isValid: boolean;
+  error: string;
+}
+export interface Validation {
+  isValid: boolean;
+  error: string;
+}
+
+export interface FormState {
+  fields: Record<string, FormField>;
 }
 
 const initialState: FormState = {
@@ -14,20 +27,29 @@ const formSlice = createSlice({
   reducers: {
     updateField: (
       state,
-      action: PayloadAction<{ id: string; value: string }>
+      action: PayloadAction<{
+        id: string;
+        value: string;
+        validation: { isValid: boolean; error: string };
+      }>
     ) => {
-      const { id, value } = action.payload;
-      state.fields[id] = value;
+      const { id, value, validation } = action.payload;
+
+      state.fields[id] = state.fields[id] || {
+        value: '',
+        isValid: false,
+        error: '',
+      };
+
+      state.fields[id] = { ...state.fields[id], value, ...validation };
     },
-    resetForm: (state) => {
+    resetForm: (state: Draft<FormState>) => {
       state.fields = initialState.fields;
     },
   },
 });
 
 export const { updateField, resetForm } = formSlice.actions;
-
-export const selectFormFields = (state: { form: FormState }) =>
-  state.form.fields;
-
 export default formSlice.reducer;
+
+export const selectFormFields = (state: RootState) => state.form.fields;

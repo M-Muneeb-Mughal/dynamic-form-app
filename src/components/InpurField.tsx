@@ -2,10 +2,18 @@ import { useDispatch } from 'react-redux';
 
 import { updateField } from '@src/features/formSlice';
 import { Field, FormFields } from '@src/interface/Field';
+import { validateField } from '@src/features/validation';
+import { useSelector } from 'react-redux';
+import RootState from '@src/features/RootState';
 
 interface InputFieldProps {
   fields: FormFields;
-  onFieldChange: (id: string, value: string | File) => void;
+  onFieldChange: (
+    id: string,
+    value: string | File,
+    isValid: boolean,
+    error: string
+  ) => void;
 }
 
 export const InputField: React.FC<InputFieldProps> = ({
@@ -13,12 +21,21 @@ export const InputField: React.FC<InputFieldProps> = ({
   onFieldChange,
 }) => {
   const dispatch = useDispatch();
+  const formData = useSelector((state: RootState) => state.form.fields);
 
   const handleFieldChange = (id: string, value: string) => {
-    dispatch(updateField({ id, value }));
-    onFieldChange(id, value);
+    const foundField = fields.flat().find((field) => field.id === id);
+
+    if (foundField) {
+      const validation = validateField(foundField, value.toString());
+
+      dispatch(updateField({ id, value, validation }));
+      onFieldChange(id, value, validation.isValid, validation.error);
+    } else {
+      // Handle the case where the field with the given id is not found
+      console.error(`Field with id ${id} not found.`);
+    }
   };
-  console.log('fields==>', fields);
 
   return (
     <div className='flex flex-col space-y-4'>
@@ -28,16 +45,24 @@ export const InputField: React.FC<InputFieldProps> = ({
             fieldSet.map((field: Field, index: number) => (
               <div key={index} className='w-full'>
                 {field.type === 'text' && (
-                  <input
-                    type='text'
-                    id={field.id}
-                    placeholder={field.placeholder}
-                    required={field.required}
-                    onChange={(e) =>
-                      handleFieldChange(field.id, e.target.value)
-                    }
-                    className='w-full border p-2 rounded-md'
-                  />
+                  <>
+                    <input
+                      type='text'
+                      id={field.id}
+                      placeholder={field.placeholder}
+                      required={field.required}
+                      onChange={(e) =>
+                        handleFieldChange(field.id, e.target.value)
+                      }
+                      className='w-full border p-2 rounded-md'
+                    />
+                    {formData[field.id]?.validation &&
+                      formData[field.id]?.validation.error && (
+                        <span style={{ color: 'red' }}>
+                          {formData[field.id]?.validation.error}
+                        </span>
+                      )}
+                  </>
                 )}
                 {field.type === 'select' && (
                   <select
