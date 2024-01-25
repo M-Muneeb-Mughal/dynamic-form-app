@@ -1,10 +1,9 @@
+import { useSelector } from 'react-redux';
 import { useDispatch } from 'react-redux';
 
-import { updateField } from '@src/features/formSlice';
 import { Field, FormFields } from '@src/interface/Field';
 import { validateField } from '@src/features/validation';
-import { useSelector } from 'react-redux';
-import RootState from '@src/features/RootState';
+import { selectFormFields, updateField } from '@src/features/formSlice';
 
 interface InputFieldProps {
   fields: FormFields;
@@ -21,8 +20,7 @@ export const InputField: React.FC<InputFieldProps> = ({
   onFieldChange,
 }) => {
   const dispatch = useDispatch();
-  const formData = useSelector((state: RootState) => state.form.fields);
-
+  const formData = useSelector(selectFormFields);
   const handleFieldChange = (id: string, value: string) => {
     const foundField = fields.flat().find((field) => field.id === id);
 
@@ -32,7 +30,6 @@ export const InputField: React.FC<InputFieldProps> = ({
       dispatch(updateField({ id, value, validation }));
       onFieldChange(id, value, validation.isValid, validation.error);
     } else {
-      // Handle the case where the field with the given id is not found
       console.error(`Field with id ${id} not found.`);
     }
   };
@@ -40,29 +37,41 @@ export const InputField: React.FC<InputFieldProps> = ({
   return (
     <div className='flex flex-col space-y-4'>
       {fields.map((fieldSet, i: number) => (
-        <div key={i} className='w-full flex items-center justify-center gap-4'>
+        <div
+          key={i}
+          className='w-full flex flex-col sm:flex-row items-center justify-center gap-6'
+        >
           {Array.isArray(fieldSet) ? (
             fieldSet.map((field: Field, index: number) => (
               <div key={index} className='w-full'>
                 {field.type === 'text' && (
-                  <>
-                    <input
-                      type='text'
-                      id={field.id}
-                      placeholder={field.placeholder}
-                      required={field.required}
-                      onChange={(e) =>
-                        handleFieldChange(field.id, e.target.value)
-                      }
-                      className='w-full border p-2 rounded-md'
-                    />
-                    {formData[field.id]?.validation &&
-                      formData[field.id]?.validation.error && (
-                        <span style={{ color: 'red' }}>
-                          {formData[field.id]?.validation.error}
-                        </span>
+                  <div>
+                    <div className='relative z-0'>
+                      <input
+                        type={field.type}
+                        id={field.id}
+                        className='block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-800 peer'
+                        required={field.required}
+                        placeholder=' '
+                        onChange={(e) =>
+                          handleFieldChange(field.id, e.target.value)
+                        }
+                      />
+                      <label
+                        htmlFor={field.id}
+                        className='absolute capitalize text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto'
+                      >
+                        {field.placeholder || field.id}
+                      </label>
+                    </div>
+                    {formData[field.id]?.isValid === false &&
+                      formData[field.id]?.error && (
+                        <p className='mt-2 text-xs text-red-600'>
+                          <span className='font-medium'>Error!</span>{' '}
+                          {formData[field.id]?.error}
+                        </p>
                       )}
-                  </>
+                  </div>
                 )}
                 {field.type === 'select' && (
                   <select
@@ -86,61 +95,118 @@ export const InputField: React.FC<InputFieldProps> = ({
                   </select>
                 )}
                 {field.type === 'textarea' && (
-                  <textarea
-                    id={field.id}
-                    placeholder={field.placeholder}
-                    onChange={(e) =>
-                      handleFieldChange(field.id, e.target.value)
-                    }
-                    className='border p-2 rounded-md'
-                  />
+                  <>
+                    <label
+                      htmlFor={field.id}
+                      className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                    >
+                      Your message
+                    </label>
+                    <textarea
+                      id={field?.id}
+                      // rows={4}
+                      required={field?.required}
+                      className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                      placeholder={field?.placeholder}
+                      onChange={(e) =>
+                        handleFieldChange(field.id, e.target.value)
+                      }
+                      defaultValue={''}
+                    />
+                  </>
                 )}
               </div>
             ))
           ) : (
-            <div key={fieldSet.id}>
+            <div key={fieldSet.id} className='w-full'>
               {fieldSet.type === 'text' && (
-                <input
-                  type='text'
-                  id={fieldSet.id}
-                  placeholder={fieldSet.placeholder}
-                  required={fieldSet.required}
-                  onChange={(e) =>
-                    handleFieldChange(fieldSet.id, e.target.value)
-                  }
-                  className='border p-2 rounded-md'
-                />
+                <div>
+                  <div className='relative z-0'>
+                    <input
+                      type={fieldSet.type}
+                      id={fieldSet.id}
+                      className='block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-800 peer'
+                      required={fieldSet.required}
+                      placeholder=' '
+                      onChange={(e) =>
+                        handleFieldChange(fieldSet.id, e.target.value)
+                      }
+                    />
+                    <label
+                      htmlFor={fieldSet.id}
+                      className='absolute capitalize text-sm text-gray-600 duration-300 transform -translate-y-6 scale-75 top-3 -z-10 origin-[0] peer-focus:start-0 peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-6 rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto'
+                    >
+                      {fieldSet.placeholder || fieldSet.id}
+                    </label>
+                  </div>
+                  {formData[fieldSet.id]?.isValid === false &&
+                    formData[fieldSet.id]?.error && (
+                      <p className='mt-2 text-xs text-red-600'>
+                        <span className='font-medium'>Error!</span>{' '}
+                        {formData[fieldSet.id]?.error}
+                      </p>
+                    )}
+                </div>
               )}
               {fieldSet.type === 'select' && (
-                <select
-                  id={fieldSet.id}
-                  required={fieldSet.required}
-                  onChange={(e) =>
-                    handleFieldChange(fieldSet.id, e.target.value)
-                  }
-                  className='border p-2 rounded-md'
-                >
-                  <option value='' disabled>
-                    {fieldSet.placeholder}
-                  </option>
-                  {fieldSet.options?.map(
-                    (option: string, optionIndex: number) => (
-                      <option key={optionIndex} value={option}>
-                        {option}
-                      </option>
-                    )
-                  )}
-                </select>
+                <>
+                  <label
+                    htmlFor={fieldSet.id}
+                    className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                  >
+                    Select an option
+                  </label>
+                  <select
+                    id={fieldSet.id}
+                    required={fieldSet.required}
+                    onChange={(e) =>
+                      handleFieldChange(fieldSet.id, e.target.value)
+                    }
+                    className='bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-800 block w-full p-2.5'
+                  >
+                    <option value=''>{fieldSet.placeholder}</option>
+                    {fieldSet.options?.map(
+                      (option: string, optionIndex: number) => (
+                        <option key={optionIndex} value={option}>
+                          {option}
+                        </option>
+                      )
+                    )}
+                  </select>
+                  {formData[fieldSet.id]?.isValid === false &&
+                    formData[fieldSet.id]?.error && (
+                      <p className='mt-2 text-xs text-red-600'>
+                        <span className='font-medium'>Error!</span>{' '}
+                        {formData[fieldSet.id]?.error}
+                      </p>
+                    )}
+                </>
               )}
               {fieldSet.type === 'textarea' && (
-                <textarea
-                  id={fieldSet.id}
-                  placeholder={fieldSet.placeholder}
-                  onChange={(e) =>
-                    handleFieldChange(fieldSet.id, e.target.value)
-                  }
-                  className='border p-2 rounded-md'
-                />
+                <>
+                  <label
+                    htmlFor={fieldSet?.id}
+                    className='block capitalize mb-2 text-sm font-medium'
+                  >
+                    {fieldSet.id}
+                  </label>
+                  <textarea
+                    id={fieldSet?.id}
+                    required={fieldSet?.required}
+                    className='block p-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
+                    placeholder={fieldSet?.placeholder}
+                    onChange={(e) =>
+                      handleFieldChange(fieldSet?.id, e.target.value)
+                    }
+                  />
+                  {formData[fieldSet.id]?.isValid === false &&
+                    formData[fieldSet.id]?.error && (
+                      <p className='mt-2 text-xs text-red-600'>
+                        <span className='font-medium'>Error!</span>{' '}
+                        {formData[fieldSet.id]?.error}
+                      </p>
+                    )}
+                </>
               )}
             </div>
           )}

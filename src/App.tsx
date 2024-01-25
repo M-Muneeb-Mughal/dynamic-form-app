@@ -31,15 +31,23 @@ export const App = () => {
     event.preventDefault();
     console.log('Form Data:', formData);
     dispatch(resetForm());
+    console.log('Form Data:', formData);
   };
 
   return (
-    <div className='container mx-auto p-4'>
-      <h1 className='text-2xl font-bold mb-4'>Dynamic Form</h1>
-      <form onSubmit={handleSubmit}>
-        <InputField fields={fields} onFieldChange={onFieldChange} />
-        <button type='submit'>Submit</button>
-      </form>
+    <div className='bg-gray-100 min-h-screen'>
+      <div className='container mx-auto py-6 lg:py-12 px-4 sm:px-8 md:px-12 lg:px-16 '>
+        <h1 className='text-3xl font-bold mb-4'>Dynamic Form</h1>
+        <form onSubmit={handleSubmit}>
+          <InputField fields={fields} onFieldChange={onFieldChange} />
+          <button
+            type='submit'
+            className='bg-indigo-600 text-gray-100 w-full sm:w-fit px-14 py-1.5 font-semibold rounded-lg mt-6'
+          >
+            Submit
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
