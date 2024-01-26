@@ -7,10 +7,6 @@
 
 ==> Branch Name: main
 
-2. Development
-
-==> Branch Name: develop
-
 ```
 
 ## Install
@@ -44,14 +40,22 @@ npm run lint
 
 ### Languages & tools
 
-- [npm](https://www.npmjs.com/)
+- [react](https://react.dev)
 
-- [Typescript](https://www.typescriptlang.org/)
+- [npm](https://www.npmjs.com)
 
-- [Node](http://nodejs.org/)
+- [react-router-dom](https://reactrouter.com)
 
-- [git](https://git-scm.com/)
+- [Typescript](https://www.typescriptlang.org)
 
-- [Vite](https://vitejs.dev/)
+- [reduxjs/toolkit](https://redux-toolkit.js.org)
 
-- [ESLint](https://eslint.org/)
+- [react-toastify](https://github.com/fkhadra/react-toastify)
+
+- [Node](http://nodejs.org)
+
+- [git](https://git-scm.com)
+
+- [Vite](https://vitejs.dev)
+
+- [ESLint](https://eslint.org)
