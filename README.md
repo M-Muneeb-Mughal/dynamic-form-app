@@ -36,6 +36,12 @@ npm run build
 npm run lint
 ```
 
+## Unit test
+
+```sh
+npm test
+```
+
 ## Resources
 
 ### Languages & tools

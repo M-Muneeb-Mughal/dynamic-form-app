@@ -1,9 +1,11 @@
-import '@src/assets/styles/index.css';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
+import { ToastContainer, toast } from 'react-toastify';
+
 import { store } from '@src/app/store';
 import { Router } from '@src/router/Router';
+
+import 'react-toastify/dist/ReactToastify.css';
+import '@src/assets/styles/index.css';
 
 window.showToast = (message, type) => {
   if (type === 'success') {
