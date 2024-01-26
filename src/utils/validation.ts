@@ -8,16 +8,14 @@ export const validateField = (
     return { isValid: false, error: 'This field is required.' };
   }
 
-  // Validation for email field
   if (field.type === 'text' && field.id.toLowerCase().includes('email')) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const isValid = emailRegex.test(value);
     return { isValid, error: isValid ? '' : 'Invalid email format.' };
   }
 
-  // Validation for phone field
   if (field.type === 'text' && field.id.toLowerCase().includes('phone')) {
-    const phoneRegex = /^\d{10}$/; // Assuming a 10-digit phone number
+    const phoneRegex = /^\+\d{1,4}\s\(\d{1,4}\)\s\d{1,12}-\d{1,12}$/;
     const isValid = phoneRegex.test(value);
     return { isValid, error: isValid ? '' : 'Invalid phone number format.' };
   }

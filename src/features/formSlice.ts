@@ -1,5 +1,6 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { Draft } from 'immer';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+
 import RootState from '@src/features/RootState';
 
 export interface FormField {

@@ -1,8 +1,7 @@
-import { useSelector } from 'react-redux';
-import { useDispatch } from 'react-redux';
-
+import { useDispatch, useSelector } from 'react-redux';
 import { Field, FormFields } from '@src/interface/Field';
-import { validateField } from '@src/features/validation';
+import { validateField } from '@src/utils/validation';
+import { FormError } from '@src/components/FormError';
 import { selectFormFields, updateField } from '@src/features/formSlice';
 
 interface InputFieldProps {
@@ -44,7 +43,7 @@ export const InputField: React.FC<InputFieldProps> = ({
           {Array.isArray(fieldSet) ? (
             fieldSet.map((field: Field, index: number) => (
               <div key={index} className='w-full'>
-                {field.type === 'text' && (
+                {field.type !== 'select' && field.type !== 'textarea' && (
                   <div>
                     <div className='relative z-0'>
                       <input
@@ -64,62 +63,62 @@ export const InputField: React.FC<InputFieldProps> = ({
                         {field.placeholder || field.id}
                       </label>
                     </div>
-                    {formData[field.id]?.isValid === false &&
-                      formData[field.id]?.error && (
-                        <p className='mt-2 text-xs text-red-600'>
-                          <span className='font-medium'>Error!</span>{' '}
-                          {formData[field.id]?.error}
-                        </p>
-                      )}
+                    <FormError error={formData[field.id]?.error} />
                   </div>
                 )}
                 {field.type === 'select' && (
-                  <select
-                    id={field.id}
-                    required={field.required}
-                    onChange={(e) =>
-                      handleFieldChange(field.id, e.target.value)
-                    }
-                    className='border p-2 rounded-md'
-                  >
-                    <option value='' disabled>
-                      {field.placeholder}
-                    </option>
-                    {field.options?.map(
-                      (option: string, optionIndex: number) => (
-                        <option key={optionIndex} value={option}>
-                          {option}
-                        </option>
-                      )
-                    )}
-                  </select>
+                  <>
+                    <label
+                      htmlFor={field?.id}
+                      className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                    >
+                      {field?.id}
+                    </label>
+                    <select
+                      id={field?.id}
+                      required={field?.required}
+                      onChange={(e) =>
+                        handleFieldChange(field?.id, e.target.value)
+                      }
+                      className='bg-transparent border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-800 block w-full p-2.5'
+                    >
+                      <option value=''>{field?.placeholder}</option>
+                      {field?.options?.map(
+                        (option: string, optionIndex: number) => (
+                          <option key={optionIndex} value={option}>
+                            {option}
+                          </option>
+                        )
+                      )}
+                    </select>
+                    <FormError error={formData[field?.id]?.error} />
+                  </>
                 )}
                 {field.type === 'textarea' && (
                   <>
                     <label
-                      htmlFor={field.id}
-                      className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
+                      htmlFor={field?.id}
+                      className='block capitalize mb-2 text-sm font-medium'
                     >
-                      Your message
+                      {field.id}
                     </label>
                     <textarea
                       id={field?.id}
-                      // rows={4}
                       required={field?.required}
-                      className='block p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
+                      className='block p-2.5 w-full text-sm text-gray-600 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
                       placeholder={field?.placeholder}
                       onChange={(e) =>
-                        handleFieldChange(field.id, e.target.value)
+                        handleFieldChange(field?.id, e.target.value)
                       }
-                      defaultValue={''}
                     />
+                    <FormError error={formData[field.id]?.error} />
                   </>
                 )}
               </div>
             ))
           ) : (
             <div key={fieldSet.id} className='w-full'>
-              {fieldSet.type === 'text' && (
+              {fieldSet.type !== 'select' && fieldSet.type !== 'textarea' && (
                 <div>
                   <div className='relative z-0'>
                     <input
@@ -139,13 +138,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                       {fieldSet.placeholder || fieldSet.id}
                     </label>
                   </div>
-                  {formData[fieldSet.id]?.isValid === false &&
-                    formData[fieldSet.id]?.error && (
-                      <p className='mt-2 text-xs text-red-600'>
-                        <span className='font-medium'>Error!</span>{' '}
-                        {formData[fieldSet.id]?.error}
-                      </p>
-                    )}
+                  <FormError error={formData[fieldSet.id]?.error} />
                 </div>
               )}
               {fieldSet.type === 'select' && (
@@ -154,7 +147,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                     htmlFor={fieldSet.id}
                     className='block mb-2 text-sm font-medium text-gray-900 dark:text-white'
                   >
-                    Select an option
+                    {fieldSet.id}
                   </label>
                   <select
                     id={fieldSet.id}
@@ -162,7 +155,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                     onChange={(e) =>
                       handleFieldChange(fieldSet.id, e.target.value)
                     }
-                    className='bg-transparent border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-800 block w-full p-2.5'
+                    className='bg-transparent border border-gray-300 text-gray-600 text-sm rounded-lg focus:ring-gray-500 focus:border-gray-800 block w-full p-2.5'
                   >
                     <option value=''>{fieldSet.placeholder}</option>
                     {fieldSet.options?.map(
@@ -173,13 +166,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                       )
                     )}
                   </select>
-                  {formData[fieldSet.id]?.isValid === false &&
-                    formData[fieldSet.id]?.error && (
-                      <p className='mt-2 text-xs text-red-600'>
-                        <span className='font-medium'>Error!</span>{' '}
-                        {formData[fieldSet.id]?.error}
-                      </p>
-                    )}
+                  <FormError error={formData[fieldSet.id]?.error} />
                 </>
               )}
               {fieldSet.type === 'textarea' && (
@@ -193,19 +180,13 @@ export const InputField: React.FC<InputFieldProps> = ({
                   <textarea
                     id={fieldSet?.id}
                     required={fieldSet?.required}
-                    className='block p-2.5 w-full text-sm text-gray-900 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
+                    className='block p-2.5 w-full text-sm text-gray-600 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
                     placeholder={fieldSet?.placeholder}
                     onChange={(e) =>
                       handleFieldChange(fieldSet?.id, e.target.value)
                     }
                   />
-                  {formData[fieldSet.id]?.isValid === false &&
-                    formData[fieldSet.id]?.error && (
-                      <p className='mt-2 text-xs text-red-600'>
-                        <span className='font-medium'>Error!</span>{' '}
-                        {formData[fieldSet.id]?.error}
-                      </p>
-                    )}
+                  <FormError error={formData[fieldSet.id]?.error} />
                 </>
               )}
             </div>
