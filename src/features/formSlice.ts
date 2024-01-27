@@ -4,7 +4,8 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import RootState from '@src/features/RootState';
 
 export interface FormField {
-  validation: Validation;
+  // validation: Validation;
+  name: string;
   value: string;
   isValid: boolean;
   error: string;
@@ -42,7 +43,12 @@ const formSlice = createSlice({
         error: '',
       };
 
-      state.fields[id] = { ...state.fields[id], value, ...validation };
+      state.fields[id] = {
+        ...state.fields[id],
+        name: id,
+        value,
+        ...validation,
+      };
     },
     resetForm: (state: Draft<FormState>) => {
       state.fields = initialState.fields;

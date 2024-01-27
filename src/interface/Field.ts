@@ -1,11 +1,11 @@
-export interface Field {
+export type Field = {
   id: string;
   placeholder?: string;
   required?: boolean;
-  type: 'text' | 'select' | 'textarea';
+  type: string;
   options?: string[];
-}
+};
 
-export interface FormSection extends Array<Field> {}
+export type FormSection = Field[];
 
 export type FormFields = (Field | FormSection)[];

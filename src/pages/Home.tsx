@@ -4,6 +4,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fields } from '@src/data/field-set';
 import { InputField } from '@src/components/InputField';
 import { selectFormFields, updateField } from '@src/features/formSlice';
+import { Field } from '@src/interface/Field';
+import { flattenFields } from '@src/utils/flattenField';
 
 export const Home = () => {
   const dispatch = useDispatch();
@@ -27,16 +29,36 @@ export const Home = () => {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const isFormValid = Object.values(formData).every((field) => field.isValid);
+
+    let isFormValid = true;
+    flattenFields.forEach((field: Field) => {
+      if (field.required) {
+        const formDataField = formData[field.id];
+        if (!formDataField || !formDataField.isValid) {
+          window.showToast(
+            'Form validation failed. Please check the fields.',
+            'error'
+          );
+          dispatch(
+            updateField({
+              id: field.id,
+              value: formDataField ? formDataField.value : '',
+              validation: {
+                isValid: false,
+                error: formDataField
+                  ? `Please enter a valid ${field.id}`
+                  : `Please enter the ${field.id}`,
+              },
+            })
+          );
+          isFormValid = false;
+        }
+      }
+    });
 
     if (isFormValid) {
       navigate('/thank-you');
-      window.showToast('Form is valid Succssfully.', 'success');
-    } else {
-      window.showToast(
-        'Form validation failed. Please check the fields.',
-        'error'
-      );
+      window.showToast('Form is valid Successfully.', 'success');
     }
   };
 
