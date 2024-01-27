@@ -36,6 +36,12 @@ npm run build
 npm run lint
 ```
 
+## Unit test
+
+```sh
+npm run test
+```
+
 ## Resources
 
 ### Languages & tools
@@ -57,5 +63,9 @@ npm run lint
 - [git](https://git-scm.com)
 
 - [Vite](https://vitejs.dev)
+
+- [testing-library/react](https://testing-library.com)
+
+- [Vitest](https://vitest.dev/)
 
 - [ESLint](https://eslint.org)

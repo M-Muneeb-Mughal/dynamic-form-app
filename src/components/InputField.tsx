@@ -1,8 +1,8 @@
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { Field, FormFields } from '@src/interface/Field';
 import { validateField } from '@src/utils/validation';
 import { FormError } from '@src/components/FormError';
-import { selectFormFields, updateField } from '@src/features/formSlice';
+import { selectFormFields } from '@src/features/formSlice';
 
 interface InputFieldProps {
   fields: FormFields;
@@ -18,15 +18,12 @@ export const InputField: React.FC<InputFieldProps> = ({
   fields,
   onFieldChange,
 }) => {
-  const dispatch = useDispatch();
   const formData = useSelector(selectFormFields);
   const handleFieldChange = (id: string, value: string) => {
     const foundField = fields.flat().find((field) => field.id === id);
-
     if (foundField) {
       const validation = validateField(foundField, value.toString());
 
-      dispatch(updateField({ id, value, validation }));
       onFieldChange(id, value, validation.isValid, validation.error);
     } else {
       console.error(`Field with id ${id} not found.`);
@@ -50,7 +47,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                         type={field.type}
                         id={field.id}
                         className='block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-800 peer'
-                        required={field.required}
+                        // required={field.required}
                         placeholder=' '
                         onChange={(e) =>
                           handleFieldChange(field.id, e.target.value)
@@ -76,7 +73,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                     </label>
                     <select
                       id={field?.id}
-                      required={field?.required}
+                      // required={field?.required}
                       onChange={(e) =>
                         handleFieldChange(field?.id, e.target.value)
                       }
@@ -104,7 +101,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                     </label>
                     <textarea
                       id={field?.id}
-                      required={field?.required}
+                      // required={field?.required}
                       className='block p-2.5 w-full text-sm text-gray-600 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
                       placeholder={field?.placeholder}
                       onChange={(e) =>
@@ -125,7 +122,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                       type={fieldSet.type}
                       id={fieldSet.id}
                       className='block py-2.5 px-0 w-full text-sm text-gray-500 bg-transparent border-0 border-b-2 border-gray-300 appearance-none focus:outline-none focus:ring-0 focus:border-gray-800 peer'
-                      required={fieldSet.required}
+                      // required={fieldSet.required}
                       placeholder=' '
                       onChange={(e) =>
                         handleFieldChange(fieldSet.id, e.target.value)
@@ -151,7 +148,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                   </label>
                   <select
                     id={fieldSet.id}
-                    required={fieldSet.required}
+                    // required={fieldSet.required}
                     onChange={(e) =>
                       handleFieldChange(fieldSet.id, e.target.value)
                     }
@@ -179,7 +176,7 @@ export const InputField: React.FC<InputFieldProps> = ({
                   </label>
                   <textarea
                     id={fieldSet?.id}
-                    required={fieldSet?.required}
+                    // required={fieldSet?.required}
                     className='block p-2.5 w-full text-sm text-gray-600 bg-transparent rounded-lg border border-gray-300 focus:ring-gray-500 focus:border-gray-800'
                     placeholder={fieldSet?.placeholder}
                     onChange={(e) =>
